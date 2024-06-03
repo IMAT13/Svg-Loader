@@ -1,0 +1,12 @@
+export const infraSvgLoaderStyles = {
+  display: " flex",
+  "flex-direction": " row",
+  "flex-wrap": " nowrap",
+  "justify-content": " center",
+  "align-items": " center",
+  width: " var(--icon-width, var(--current-width))",
+  height: " var(--icon-height, var(--current-height))",
+  "background-color": " var(--icon-background-color)",
+  color: " var(--icon-color, var(--current-color))",
+  "max-width": " 100%",
+};

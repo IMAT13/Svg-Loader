@@ -1,0 +1,14 @@
+{
+  "name": "svg-loader",
+  "author": "Ali Qavi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "part-unplugin-components": "^1.0.0",
+    "unplugin-auto-import": "^0.17.5",
+    "vite-svg-loader": "^5.1.0"
+  }
+}
+
