@@ -200,7 +200,7 @@ export default function ({ dir, subDomain = null, ignore = [], transform }) {
       return () =>
         h("span", {
           innerHTML: svgContent.value,
-          class: "infra-svg-loader",
+          class: "svg-loader",
           style: styleProperties.value,
         });
     },

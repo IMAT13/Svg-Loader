@@ -1,4 +1,4 @@
-export const infraSvgLoaderStyles = {
+export const svgLoaderStyles = {
   display: " flex",
   "flex-direction": " row",
   "flex-wrap": " nowrap",
