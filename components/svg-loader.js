@@ -12,7 +12,7 @@ export default function ({ dir, subDomain = null, ignore = [], transform }) {
       },
       subDomain: {
         type: String,
-        default: "${subDomain}",
+        default: "${subDomain || ''}",
       },
       path: {
         type: String,
