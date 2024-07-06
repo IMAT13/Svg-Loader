@@ -12,12 +12,12 @@ SvgLoader is a Vite plugin that simplifies the process of loading SVGs into your
 
 ## Installation
 
-Currently, SvgLoader is not available as an npm package. However, you can use the provided codebase and add it to your project. Additionally, you will need to install the `vite-svg-loader` package.
+Currently, SvgLoader is not available as an npm package. However, you can use the provided codebase and add it to your project. Additionally, you will need to install the `fast-glob` package.
 
-1. Install `vite-svg-loader`:
+1. Install `fast-glob`:
 
 ```bash
-npm install vite-svg-loader
+npm install fast-glob
 ```
 
 2. Import SvgLoader from the path to the package and add it to the list of plugins in your Vite config.
@@ -36,8 +36,6 @@ import svgLoader from "path-to-svg-loader-package";
 export default {
   plugins: [
     svgLoader({
-      dir: "@/assets/svg/",
-      subDomain: "shared",
       ignore: [],
       componentName: "SvgLoader",
       transform: null, // Optional transformation function
@@ -67,8 +65,6 @@ Once you have added SvgLoader to your Vite config, you can use the global compon
 #### Props
 
 - `name`: (String, required) The name of the SVG file.
-- `subDomain`: (String, optional) Subdirectory under the main SVG directory.
-- `path`: (String, optional) Full path to the SVG file.
 - `transformation`: (Boolean, optional) Enable or disable SVG transformation (default: true).
 - `height`: (String, optional) Height of the SVG.
 - `width`: (String, optional) Width of the SVG.
@@ -153,4 +149,3 @@ We welcome contributions from the community! If you encounter any issues or have
 SvgLoader is distributed under the MIT License.
 
 Feel free to reach out if you have any questions or need further assistance.
-
