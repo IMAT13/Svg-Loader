@@ -3,19 +3,14 @@ const WIDTH_REGEX = /width\s*=\s*['"]?(\d+)['"]?/;
 const HEIGHT_REGEX = /height\s*=\s*['"]?(\d+)['"]?/;
 const VIEW_BOX_REGEX = /viewBox=['"]([^"]+)['"]/;
 
-export default function ({ dir, subDomain = null, ignore = [], transform }) {
+import logger from "../helpers/printConsoleMessage";
+
+export default function ({ ignore = [], transform, context }) {
   return `{
     props: {
       name: {
         type: String,
         required: true,
-      },
-      subDomain: {
-        type: String,
-        default: "${subDomain || ''}",
-      },
-      path: {
-        type: String,
       },
       transformation: {
         type: Boolean,
@@ -38,6 +33,8 @@ export default function ({ dir, subDomain = null, ignore = [], transform }) {
       },
     },
     setup(props) {
+      const context =${JSON.stringify(context)};
+      const logger = ${logger};
       const ignoredSvgs = "${ignore}".replaceAll(".svg", "").split(",");
       const svgContent = ref(null);
       const currentColor = ref("");
@@ -60,20 +57,20 @@ export default function ({ dir, subDomain = null, ignore = [], transform }) {
 
       const handleAttributesErrors = (size, viewBoxDimensions) => {
         if (!viewBoxDimensions && !size.width && !size.height) {
-          console.error(
-            "Error: The provided SVG (name: " +
+          logger("error",
+            "The provided SVG (name: " +
               props.name +
               ") is missing required attributes: width, height, and viewBox. Please ensure the SVG includes these attributes.",
           );
         } else if (viewBoxDimensions && (!size.width || !size.height)) {
-          console.warn(
-            "Warning: The provided SVG (name: " +
+          logger("warn",
+            "The provided SVG (name: " +
               props.name +
               ") is missing required attributes: width and height. Please ensure the SVG includes these attributes.",
           );
         } else if ((size.width || size.height) && !viewBoxDimensions) {
-          console.warn(
-            "Warning: The provided SVG (name: " +
+          logger("warn",
+            "The provided SVG (name: " +
               props.name +
               ") is missing the required viewBox attribute. Please ensure the SVG includes this attribute.",
           );
@@ -104,11 +101,13 @@ export default function ({ dir, subDomain = null, ignore = [], transform }) {
         if (props.preserveAspectRatio)
           transformedSvg = addAttribute(transformedSvg, "preserveAspectRatio", props.preserveAspectRatio);
 
+        transformedSvg = addAttribute(transformedSvg, "data-name", props.name);
+
         return changeSVGColor(transformedSvg);
       };
 
       const extractSVGViewBox = (svg) => {
-        const viewBoxDimensions = svg.match(${VIEW_BOX_REGEX})?.[1]?.split(/\\s+/)
+        const viewBoxDimensions = svg.match(${VIEW_BOX_REGEX})?.[1]?.split(/\\s+/);
 
         if (Array.isArray(viewBoxDimensions) && viewBoxDimensions.length === 4) {
           const svgViewBox = {
@@ -153,16 +152,23 @@ export default function ({ dir, subDomain = null, ignore = [], transform }) {
         props.transformation;
 
       watchEffect(async () => {
-        const [subDomain, name] = props.path ? props.path?.split("/") : [props.subDomain, props.name];
+        const content = context[props.name];
 
-        const module = subDomain ?  await import(/* @vite-ignore */"${dir.replace(/.\/src|\/src|@/, ".")}" + subDomain + "/" + name + ".svg?raw") : await import(/* @vite-ignore */"${dir.replace(/.\/src|\/src|@/, ".")}" + name + ".svg?raw");
-        const transformedSVG = isTransformable ? transformSVG(module.default) : module.default;
+        if (!content){
+            logger("error",
+              "The specified SVG (name: " +
+                props.name +
+                ") is missing. Please ensure the SVG file is included in the src/*.",
+            );
+            
+            return;
+        }
+        
+        const transformedSVG = isTransformable ? transformSVG(content) : content;
 
         if (transform && typeof transform === "function") {
           svgContent.value = transform(transformedSVG, {
             name: props.name,
-            subDomain: props.subDomain,
-            path: props.path,
           });
         } else {
           svgContent.value = transformedSVG;

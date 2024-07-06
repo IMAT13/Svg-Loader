@@ -1,13 +1,15 @@
-import svgLoader from "vite-svg-loader";
-import registerSvgLoader from "./helpers/registerSvgLoaderComponent.js";
-import componentRegisterer from "./plugins/component-registerer.js";
+import generateProjectSvgsContext from "./helpers/generateProjectSvgsContext.js";
+import registerSvgLoader from "./utils/registerSvgLoaderComponent.js";
 
-export default (options = { dir: "./assets/svg/", subDomain: "shared" }) => {
-  return [
-    svgLoader({
-      svgoConfig: { plugins: [{ name: "removeViewBox", active: false }] },
-    }),
-    componentRegisterer(registerSvgLoader, options),
-  ];
-};
+export default function (options) {
+  return {
+    name: "svg-loader",
+    async transform(code, id) {
+      if (id.includes("main.ts") || id.includes("main.js")) {
+        const context = await generateProjectSvgsContext();
 
+        return registerSvgLoader(code, { ...options, context });
+      }
+    },
+  };
+}
