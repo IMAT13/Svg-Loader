@@ -1,5 +1,5 @@
 const printConsoleMessage = (type, text) => {
-  console[type](`[svg-loader]: ${text}`);
-};
+  console[type](`[svg-loader]: ${text}`)
+}
 
-export default printConsoleMessage;
+export default printConsoleMessage

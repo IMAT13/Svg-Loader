@@ -1,23 +1,24 @@
 # SvgLoader Vite Plugin
 
-SvgLoader is a Vite plugin that simplifies the process of loading SVGs into your project. It provides a component that you can use anywhere in your code to load SVGs effortlessly. Loading SVGs can be cumbersome, but with SvgLoader, you can easily manage and use SVGs without any hassle.
+SvgLoader is a Vite plugin for Vue 3 that simplifies the process of loading SVGs into your project. It provides a component that you can use anywhere in your code to load SVGs effortlessly. Loading SVGs can be cumbersome, but with SvgLoader, you can easily manage and use SVGs without any hassle.
 
 ## Features
 
 - Load SVGs with minimal effort.
 - Provides a global component for SVG usage.
-- Compatible with Vite.
+- Compatible with Vite and Vue 3.
 - Customizable configurations.
 - Modify styles using CSS variables.
+- Automatic SVG transformation and optimization.
 
 ## Installation
 
-Currently, SvgLoader is not available as an npm package. However, you can use the provided codebase and add it to your project. Additionally, you will need to install the `fast-glob` package.
+Currently, SvgLoader is not available as an npm package. However, you can use the provided codebase and add it to your project. You will need to install the following dependencies:
 
-1. Install `fast-glob`:
+1. Install required dependencies:
 
 ```bash
-npm install fast-glob
+npm install fast-glob vite-svg-loader
 ```
 
 2. Import SvgLoader from the path to the package and add it to the list of plugins in your Vite config.
@@ -31,22 +32,45 @@ Here's an example of how to set up and use SvgLoader in your Vite project.
 First, import SvgLoader from the path to the package and add it to the list of plugins in your Vite config.
 
 ```javascript
-import svgLoader from "path-to-svg-loader-package";
+import svgLoader from "path-to-svg-loader-package/vite";
 
 export default {
   plugins: [
     svgLoader({
-      ignore: [],
-      componentName: "SvgLoader",
-      transform: null, // Optional transformation function
+      dirs: ["src/**/*.svg"], // Array of glob patterns to find SVG files
+      ignore: [], // Array of SVG file names to ignore during transformation
+      transform: null, // Optional transformation function: (svg, { name }) => string
     }),
   ],
 };
 ```
 
+#### Configuration Options
+
+- `dirs` (Array, optional): Glob patterns to find SVG files. Default: `["src/**/*.svg"]`
+- `ignore` (Array, optional): Array of SVG file names (without extension) to ignore during transformation. Default: `[]`
+- `transform` (Function, optional): Custom transformation function that receives the SVG string and an object with the SVG name. Should return a transformed SVG string. Default: `null`
+
+### Register the Vue Component
+
+In your Vue application's main entry file (e.g., `main.js` or `main.ts`), register the SvgLoader component:
+
+```javascript
+import { createApp } from "vue";
+import svgLoaderPlugin from "path-to-svg-loader-package/vue";
+import App from "./App.vue";
+
+const app = createApp(App);
+
+// Register the SvgLoader component globally
+app.use(svgLoaderPlugin, { as: "SvgLoader" }); // 'as' is optional, defaults to "SvgLoader"
+
+app.mount("#app");
+```
+
 ### Using the Global Component
 
-Once you have added SvgLoader to your Vite config, you can use the global component in your project to load SVGs. For example:
+Once you have added SvgLoader to your Vite config and registered the Vue component, you can use the global component in your project to load SVGs. For example:
 
 ```html
 <template>
@@ -84,12 +108,12 @@ Once you have added SvgLoader to your Vite config, you can use the global compon
 </template>
 ```
 
-#### Custom Path
+#### Disable Transformation
 
 ```html
 <template>
   <div>
-    <SvgLoader path="custom/path/to/logo" />
+    <SvgLoader name="logo" :transformation="false" />
   </div>
 </template>
 ```
@@ -136,9 +160,15 @@ These variables can be applied inside your CSS files and have higher priority ov
 
 By using these CSS variables, you can easily customize the appearance of your SVGs locally within your components.
 
+## Requirements
+
+- Vue 3.x
+- Vite
+- Node.js
+
 ## Compatibility
 
-SvgLoader is fully compatible with Vite. There are no known issues so far.
+SvgLoader is fully compatible with Vite and Vue 3. There are no known issues so far.
 
 ## Contributing
 
